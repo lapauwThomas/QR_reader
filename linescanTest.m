@@ -1,5 +1,5 @@
-close all
 clear
+close all
 
 
 Original = imread('test.jpg','jpg'); %read image
@@ -14,8 +14,5 @@ mono = binarize(im2double(grey),0.5); % convert to double and binarize with a th
 figure
 imshow(mono); % show mono image
 
-
-
-
-
-
+linetest = mono(:,101).';
+linescanPatternbox(linetest)
