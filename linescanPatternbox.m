@@ -1,4 +1,4 @@
-function [ indexOfCenterbox ] = linescanPatternbox(line,startingIndex)
+function [ indexOfCenterbox boxSize] = linescanPatternbox(line,startingIndex)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
     patternboxRatios = [1 1 3 1 1];
@@ -11,7 +11,6 @@ function [ indexOfCenterbox ] = linescanPatternbox(line,startingIndex)
     
     lineLength = length(line);
     currentState = 'reset';
-    patternStart = 0;
     
 
     while x < lineLength
@@ -104,7 +103,8 @@ function [ indexOfCenterbox ] = linescanPatternbox(line,startingIndex)
                      end
                 end
             case 'patternEnd'
-                indexOfCenterbox = round(centerboxIndex + detectedPixels(3)/2);
+                indexOfCenterbox = centerboxIndex;
+                boxSize = detectedPixels(3);
                 return
         end
         x = x+1;
@@ -112,6 +112,7 @@ function [ indexOfCenterbox ] = linescanPatternbox(line,startingIndex)
         
     end
     indexOfCenterbox = 0;
+    boxSize = 0;
 end
 
 
