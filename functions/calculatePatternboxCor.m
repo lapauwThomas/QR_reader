@@ -4,7 +4,7 @@ function [ centers ] = calculatePatternboxCor(monoImage)
 centers = []
 clusterMargin = 20;%in pixels
 
-moveUpVal = 100;
+moveUpVal = 50;
 
 for i = 1:length(monoImage(1,:))
     hCor = 0;
@@ -25,8 +25,8 @@ for i = 1:length(monoImage(1,:))
                 Cor = [hCor vCor];
                 [numberOfCor y] = size(centers);
                 if numberOfCor==0
-                    B = Cor.'
-                    centers = [centers B]
+                    B = Cor.';
+                    centers = [centers B];
                 else
                     found = false;
                     for l = 1:y %for each found position
