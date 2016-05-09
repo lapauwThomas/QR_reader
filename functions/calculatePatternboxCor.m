@@ -1,4 +1,4 @@
-function [ centers ] = calculatePatternboxCor(monoImage)
+function [ centers] = calculatePatternboxCor(monoImage)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
 centers = []
@@ -6,7 +6,7 @@ clusterMargin = 20;%in pixels
 
 moveUpVal = 50;
 
-for i = 1:length(monoImage(1,:))
+for i = 1:length(monoImage(:,1))
     hCor = 0;
     vCor = 0;
     horizontalCor = linescanPatternbox(monoImage(i,:),1); %calculates all positions of the pattern box on row i
@@ -22,7 +22,7 @@ for i = 1:length(monoImage(1,:))
             if length(verticalCor)>1 & verticalCor(2) ~=0
                 vCor = verticalCor(2);
                 
-                Cor = [hCor vCor];
+                Cor = [hCor vCor ];
                 [numberOfCor y] = size(centers);
                 if numberOfCor==0
                     B = Cor.';
