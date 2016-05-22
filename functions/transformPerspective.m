@@ -12,7 +12,7 @@ function [ new_coordinates ] = transformPerspective( upperLeft , upperRight , lo
     v = [upperLeft(1) lowerLeft(1) upperRight(1) lowerRight(1)];
 
     length_transformed_image = 500;
-    block_size = 4*length_transformed_image/29; %29 for version 3, 37 for version 5
+    block_size = length_transformed_image/29; %29 for version 3, 37 for version 5
 
     image_gray = img;
 
@@ -30,17 +30,29 @@ function [ new_coordinates ] = transformPerspective( upperLeft , upperRight , lo
     u3 = u(4);
     v3 = v(4);
 
-    x0 = 1+block_size;
-    y0 = 1+block_size;
+    x0 = round(block_size*3.5);
+    y0 = round(block_size*3.5);
 
-    x1 = length_transformed_image+1-block_size;
-    y1 = 1+block_size;
+    x1 = length_transformed_image-round(block_size*3.5)+3;
+    y1 = round(block_size*3.5);
 
-    x2 = 1+block_size;
-    y2 = length_transformed_image+1-block_size;
+    x2 = round(block_size*3.5);
+    y2 = length_transformed_image+1-round(block_size*3.5);
 
-    x3 = length_transformed_image+1-block_size;
-    y3 = length_transformed_image+1-block_size;
+    x3 = length_transformed_image-round(block_size*6.6)+3;
+    y3 = length_transformed_image-round(block_size*6.6);
+%     x0 = 68;
+%     y0 = 68;
+% 
+%     x1 = 68;
+%     y1 = 428;
+% 
+%     x2 = 428;
+%     y2 = 68;
+% 
+%     x3 = 383;
+%     y3 = 378;
+
 
     u = [u0 u1 u2 u3].';
     v = [v0 v1 v2 v3].';
@@ -84,7 +96,7 @@ function [ new_coordinates ] = transformPerspective( upperLeft , upperRight , lo
 
     new_coordinates = new_coordinates(1:length_transformed_image,1:length_transformed_image); 
     
-    se = strel('line',3,90);
+    se = strel('line',4,90);
     vertical_dilation = imdilate(1-new_coordinates,se);
 
     se = strel('line',2,0);

@@ -9,13 +9,17 @@ addpath ( genpath ( pwd ) );
 %*********************************$
 %******   Parameters **********$*
 imWidth = 500; %image width to scale
-threshold = 0.5; %threshold for binarization
+threshold = 0.4; %threshold for binarization
 
-angle = 0143; %angle in degrees to rotate image for test
+angle = 0; %angle in degrees to rotate image for test
 
 angleMargin = 10; %in degrees
 %% Open Image
- Image = imread('QR_persp.jpg','jpg'); %read image
+% Image = imread('QR_persp.jpg','jpg'); %read image
+  Image = imread('2.jpg','jpg'); %read image
+ figure('name','Original image')
+ imshow(Image)
+ title('starting image')
 %Image = imread('test.jpg','jpg'); %read image
 %Image = imread('perspective2.png','png'); %read image
 %imshow(Image); % show original image
@@ -27,9 +31,9 @@ Image = imresize(Image,[imWidth,NaN]); % resize image
 
 %% Binarize the image
 grey = rgb2gray(Image); %convert to grayscale
+
 mono = binarize(im2double(grey),threshold); % convert to double and binarize with a threshold of 0.5
 
-mono = im2double(mono);
 
 figure
 imshow(mono); % show mono image
@@ -38,7 +42,7 @@ title('Binarized figure');
 %% Calculate centers of Patternboxex
 centers = calculatePatternboxCor(mono);
 hold on
-plot(centers(1,:),centers(2,:),'w*');
+% plot(centers(1,:),centers(2,:),'w*');
 
 
 %% Sort centers
@@ -85,11 +89,15 @@ UL = centers(:,upperLeftIndex);
 %% Detection of fourth box
 indexMod = 1 + mod(upperLeftIndex,length(centers(1,:)));
 A = centers(:,indexMod);
+plot(A(1),A(2),'y*');
 moduleWidth = ceil(dist(A,UL)/22); %distance between centers is 22 modules round up
+ indexMod = 1 + mod(upperLeftIndex+1,length(centers(1,:)));
+B = centers(:,indexMod);
 
+plot(B(1),B(2),'g*');
 
 % detection is now done with a sqare detection pattern, maybe better with
-% round patters to compensate for rotation
+% round patters to compensate for rotation?
 detectionBox = zeros(5*moduleWidth);
 whiteOverlay = ones(3*moduleWidth);
 centerOverlay = zeros(moduleWidth);
@@ -104,29 +112,32 @@ nSec = detectionBox-mean(mean(detectionBox));
 crr = xcorr2(nimg,nSec);
 [ssr,snd] = max(crr(:));
 [ij,ji] = ind2sub(size(crr),snd);
-plot(ij,ji,'y*')
-mono(ij:-1:ij-size(detectionBox,1)+1,ji:-1:ji-size(detectionBox,2)+1) = rot90(detectionBox,2);
-
-LR = [round(ij - size(detectionBox,1)/2 ); round(ji-size(detectionBox,2)/2)]
 
 
-figure
- imshow(mono);
- title('With overlay xcor')
+%mono(ij:-1:ij-size(detectionBox,1)+1,ji:-1:ji-size(detectionBox,2)+1) = rot90(detectionBox,2);
+
+LR = [ round(ji-size(detectionBox,2)/2),round(ij - size(detectionBox,1)/2 )].'
+
+
+% figure
+%  imshow(mono);
+%  title('With overlay xcor')
 x = ij;
 X = ij-size(detectionBox,1)+1;
 
 y = ji;
 Y = ji-size(detectionBox,2)+1;
 hold on
-    plot([y y Y Y y],[x X X x x],'r')
-    plot(LR(2),LR(1),'r*');
+%     plot([y y Y Y y],[x X X x x],'r')
+    plot(LR(1),LR(2),'r*');
+    
+    plot([UL(1);LR(1)],[UL(2);LR(2)]);
     
     
 %% Compensate rotation
 
-v1 = LR-UL
-v2 = [1 0]
+v1 = LR-UL;
+v2 = [1 1]
 
 angle = rad2deg(acos(dot(v1, v2) / (norm(v1) * norm(v2))))
 compensated = imrotate(mono,-angle);
@@ -149,7 +160,10 @@ imshow(compensated)
 
 %% Correct the perspective of the QR code
 
-% IM = transformPerspective(centers(:,upperLeftIndex),B,A, fourth,mono);
+UR = A
+LL = B
+
+ IM = transformPerspective(UL,UR,LL, LR,mono);
 % figure
 % imshow(IM)
 % title('Corrected perspective');
@@ -157,7 +171,7 @@ imshow(compensated)
 
 %% Decode the QR code
 
-
+content = decoder(IM.')
 
 
 
