@@ -312,7 +312,7 @@ for z = 1:character_count_indicator
     decimal(z) = bi2de(binary_message(1,(z-1)*bits_per_character+1:z*bits_per_character),'left-msb');
 end
 
-message = char(decimal)
+content = char(decimal);
 
 
 %%
