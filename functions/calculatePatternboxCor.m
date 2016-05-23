@@ -1,7 +1,7 @@
 function [ centers] = calculatePatternboxCor(monoImage)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
-centers = []
+centers = [];
 clusterMargin = 20;%in pixels
 
 moveUpVal = 50;

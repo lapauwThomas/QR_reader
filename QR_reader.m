@@ -9,24 +9,28 @@ addpath ( genpath ( pwd ) );
 %*********************************$
 %******   Parameters **********$*
 imWidth = 500; %image width to scale
-threshold = 0.4; %threshold for binarization
+threshold = 0.5; %threshold for binarization
 
-angle = 279; %angle in degrees to rotate image for test
+imAngle = 0; %angle in degrees to rotate image for test
 
 angleMargin = 10; %in degrees
 %% Open Image
 % Image = imread('QR_persp.jpg','jpg'); %read image
-Image = imread('2.jpg','jpg'); %read image
+Original = imread('2.jpg','jpg'); %read image
 figure('name','Original image')
- imshow(Image)
+ imshow(Original)
 title('starting image')
 %Image = imread('test.jpg','jpg'); %read image
 %Image = imread('perspective2.png','png'); %read image
 %imshow(Image); % show original image
 %title('Original image');
+notDecoded = true;
 
+while notDecoded && (threshold > 0)
+    close all
+    try
 %% Transform image
-Image = imrotate(Image,angle);
+Image = imrotate(Original,imAngle);
 Image = imresize(Image,[imWidth,NaN]); % resize image
 
 %% Binarize the image
@@ -42,7 +46,6 @@ title('Binarized figure');
 %% Calculate centers of Patternboxex
 centers = calculatePatternboxCor(mono);
 hold on
-% plot(centers(1,:),centers(2,:),'w*');
 
 
 %% Sort centers
@@ -70,7 +73,6 @@ for i = 1:length(possibleCombinations(:,1)) %here we are assumed that only 3 pos
     indexB = possibleCombinations(i,3);
     corB = centers(:,indexB)-presumedUpperLeft;
     
-    %angle = dot(A,B) %find upper left conren by calculating dot product
     angle = rad2deg(acos(dot(corA, corB) / (norm(corA) * norm(corB))))
     if angle < (90 + angleMargin) & angle > (90 - angleMargin) %check if angle is within resonable margin from 90 degrees
         upperLeftIndex = upperLeftIndexTest;
@@ -115,24 +117,15 @@ crr = xcorr2(nimg,nSec);
 [ssr,snd] = max(crr(:));
 [ij,ji] = ind2sub(size(crr),snd);
 
-
-%mono(ij:-1:ij-size(detectionBox,1)+1,ji:-1:ji-size(detectionBox,2)+1) = rot90(detectionBox,2);
-
 LR = [ round(ji-size(detectionBox,2)/2),round(ij - size(detectionBox,1)/2 )].'
 
 
-% figure
-%  imshow(mono);
-%  title('With overlay xcor')
 x = ij;
 X = ij-size(detectionBox,1)+1;
 
 y = ji;
 Y = ji-size(detectionBox,2)+1;
 hold on
-%     plot([y y Y Y y],[x X X x x],'r')
-% plot(LR(1),LR(2),'r*');
-
 plot([UL(1);LR(1)],[UL(2);LR(2)]);
 
 
@@ -178,10 +171,10 @@ plot(LR(1),LR(2),'r*');
 legend('Diagonal vector','Upper Right pattern','Lower left pattern','Upper Left pattern','Lower Right pattern');
 
 
-UL
-UR
-LL
-LR
+% UL
+% UR
+% LL
+% LR
 if ((UR(1)|UR(2)) & (LL(1)|LL(2)) & (UL(1)|UL(2)) & (LR(1)|LR(2)))==0
     error('one of the coordinates is [0;0]')
 end
@@ -196,8 +189,18 @@ IM = transformPerspective(UL,UR,LL, LR,mono);
 %% Decode the QR code
 
 content = decoder(IM)
+notDecoded = false
 
-
+    catch errorMsg
+        disp(errorMsg);
+        notDecoded = true;
+        imAngle = imAngle + 90
+        if imAngle >= 360
+            imAngle = 0
+            threshold = threshold - 0.1
+        end
+    end
+end
 
 
 
