@@ -26,7 +26,12 @@ title('starting image')
 %title('Original image');
 notDecoded = true;
 
-while notDecoded && (threshold > 0)
+while notDecoded && (threshold > 0) 
+    %The decoding is iterated, if the first try does not work to decode,
+    %the image will be rotated with 90°. if after 360° rotation it has not
+    %been decoded, the threshold will be lowered, and the decoding and
+    %rotating will start again, this until the threshold is 0 then the
+    %decoding has failed
     close all
     try
 %% Transform image

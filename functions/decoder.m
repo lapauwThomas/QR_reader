@@ -20,9 +20,6 @@ image_gray = image;
  
 image_gray = imresize(image,[length_transformed_image length_transformed_image]);
 
-figure('name','thresholded')
-imshow(image_gray);
-
 %% Find format marker
 row = 9;
 column = [1 9];
@@ -187,9 +184,9 @@ imshow(image_gray);
 %     end
 % end
 
-figure('name','masked')
-imshow(image_gray);
-
+% figure('name','masked')
+% imshow(image_gray);
+% 
 
 
 %% Make decoding easier
@@ -203,9 +200,9 @@ for l = 3:4:number_of_blocks
     image_gray((l-1)*block_size+1:(l+1)*block_size,:) = fliplr(image_gray((l-1)*block_size+1:(l+1)*block_size,:));
 end
     
-figure('name','every two rows flipped')
-imshow(image_gray);
-
+% figure('name','every two rows flipped')
+% imshow(image_gray);
+% 
 
 %% Eerst averagen
 
@@ -241,8 +238,8 @@ for l = 1:length_transformed_image
      end
 end
 
-figure('name','averaged')
-imshow(image_gray_averaged,'InitialMagnification','fit');
+% figure('name','averaged')
+% imshow(image_gray_averaged,'InitialMagnification','fit');
 
 
 
@@ -274,8 +271,8 @@ for i = 1:length(predata)
    data(1,2*i) = predata(2,i);
 end
  
-figure('name','data with non-data in it')
-imshow(data(1:120),'InitialMagnification','fit');
+% figure('name','data with non-data in it')
+% imshow(data(1:120),'InitialMagnification','fit');
 
 
 % remove non-data parts
@@ -288,8 +285,8 @@ while( s <= length(data))
     s = s+1;
 end
 
-figure('name','data')
-imshow(data(41:100),'InitialMagnification','fit');
+% figure('name','data')
+% imshow(data(41:100),'InitialMagnification','fit');
 
 data = 1 - data;
 
@@ -302,7 +299,7 @@ if mode_indicator == 4
     pointer = 8;
     character_count_indicator = bi2de(data(4+1:4+pointer),'left-msb')  
 else
-    disp('NOT YET IMPLEMENTED: other mode detected!')
+    error('NOT YET IMPLEMENTED: other mode detected!')
 end
 
 
