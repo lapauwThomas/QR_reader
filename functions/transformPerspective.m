@@ -105,8 +105,8 @@ function [ new_coordinates ] = transformPerspective( upperLeft , upperRight , lo
     new_coordinates = 1-horizontal_dilation;
     
     %% Show result
-    figure('name','transformed perspective')
-    imshow(new_coordinates);
+%     figure('name','transformed perspective')
+%     imshow(new_coordinates);
 
 end
 
